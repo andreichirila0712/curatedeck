@@ -1,111 +1,78 @@
 package andrei.chirila.prove_yourself.infrastructure.controllers;
 
-import andrei.chirila.prove_yourself.application.mappers.UserMapper;
+import andrei.chirila.prove_yourself.domain.services.ProjectService;
 import andrei.chirila.prove_yourself.domain.services.UserService;
 import andrei.chirila.prove_yourself.infrastructure.config.ApiConfig;
 import andrei.chirila.prove_yourself.infrastructure.config.WebSecurityConfig;
-import andrei.chirila.prove_yourself.infrastructure.dtos.UserProfileDto;
-import andrei.chirila.prove_yourself.infrastructure.dtos.UserSettingsDto;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.view.FragmentsRendering;
+
 
 @Controller
-@RequestMapping(ApiConfig.API_BASE_PATH)
+@RequestMapping("/api")
 public class SiteController {
+    private final ProjectService projectService;
     private final UserService userService;
 
-    public SiteController(UserService userService) {
+    public SiteController(ProjectService projectService, UserService userService) {
+        this.projectService = projectService;
         this.userService = userService;
     }
 
-    @GetMapping("/welcome")
+    @GetMapping("/public/welcome")
     public String welcome(Model model) {
-        model.addAttribute("loginForm", WebSecurityConfig.LOGIN_URL_MATCHER);
-        model.addAttribute("signUp", WebSecurityConfig.REGISTRATION_URL_MATCHER);
-        model.addAttribute("privacyPolicy", WebSecurityConfig.PRIVACY_POLICY_URL_MATCHER);
-        model.addAttribute("termsOfService", WebSecurityConfig.TERMS_OF_SERVICE_URL_MATCHER);
+        model.addAttribute("login", WebSecurityConfig.LOGIN);
+        model.addAttribute("policy", WebSecurityConfig.POLICY);
+        model.addAttribute("terms",WebSecurityConfig.TERMS);
 
         return "site/welcome";
     }
 
     @GetMapping("/home")
-    public String home(Model model) {
-        model.addAttribute("projectsPath", ApiConfig.API_BASE_PATH + "/projects");
-        model.addAttribute("profilePath", ApiConfig.API_BASE_PATH + "/profile");
-        model.addAttribute("settingsPath", ApiConfig.API_BASE_PATH + "/settings");
-        model.addAttribute("logoutPath", WebSecurityConfig.LOGOUT_URL_MATCHER);
+    public String home(Model model, @AuthenticationPrincipal OidcUser principal) {
+        model.addAttribute("projects", ApiConfig.API_BASE_PATH + "/user/projects");
+        model.addAttribute("profile",    ApiConfig.API_BASE_PATH + "/user/profile");
+        model.addAttribute("settings", ApiConfig.API_BASE_PATH + "/user/settings");
+        model.addAttribute("name", principal.getAttribute("given_name"));
+        model.addAttribute("theme", userService.getUserSettings(principal.getSubject()).theme());
+        model.addAttribute("avatar", userService.getUrlToAvatar(principal.getSubject()));
 
         return "site/home";
     }
 
-    @GetMapping("/login")
-    public FragmentsRendering login(Model model) {
-        model.addAttribute("loginPath", WebSecurityConfig.LOGIN_AUTH_URL_MATCHER);
-
-        return FragmentsRendering.fragment("site/login :: login-frag").build();
+    @GetMapping("/public/privacy")
+    public String privacy() {
+        return "site/privacy";
     }
 
-    @GetMapping("/privacy-policy")
-    public String privacyPolicy() {
-        return "site/privacy-policy";
+    @GetMapping("/public/terms")
+    public String terms() {
+        return "site/terms";
     }
 
-    @GetMapping("/tos")
-    public String tos() {
-        return "site/tos";
+    @GetMapping("/public/projects/project/{id}")
+    public String publicProject(@PathVariable Long id, Model model) {
+        model.addAttribute("project", projectService.getPublicProject(id));
+
+       return "site/public-project";
     }
 
-    @GetMapping("/settings")
-    public String settings(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("homePath", WebSecurityConfig.HOME_URL_MATCHER);
-        model.addAttribute("updateLanguagePath", ApiConfig.API_BASE_PATH + "/user/update-language");
-        model.addAttribute("updateThemePath", ApiConfig.API_BASE_PATH + "/user/update-theme");
-        model.addAttribute("updateDateFormatPath", ApiConfig.API_BASE_PATH + "/user/update-date-format");
-        model.addAttribute("updateVisibilityPath", ApiConfig.API_BASE_PATH + "/user/update-visibility");
-        model.addAttribute("updateDiscoverabilityPath", ApiConfig.API_BASE_PATH + "/user/update-discoverability");
-        model.addAttribute("changeEmailPath", ApiConfig.API_BASE_PATH + "/user/change-email");
-        model.addAttribute("changePasswordPath", ApiConfig.API_BASE_PATH + "/user/change-password");
-        model.addAttribute("deleteAccountPath", ApiConfig.API_BASE_PATH + "/user/delete-account");
-        model.addAttribute("checkCurrentPasswordPath", ApiConfig.API_BASE_PATH + "/user/check-current-password");
+    @GetMapping("/public/projects")
+    public String publicProjects(@AuthenticationPrincipal OidcUser principal, Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        model.addAttribute("title", "Public projects");
+        model.addAttribute("projects", "/api/project/all-public");
+        model.addAttribute("name", principal != null ? principal.getAttribute("given_name") : "");
+        model.addAttribute("authenticated", principal != null);
 
-        UserSettingsDto userSettingsDto = this.userService.getUserSettings(userDetails.getUsername());
-        model.addAttribute("languagePreference", userSettingsDto.language());
-        model.addAttribute("themePreference", userSettingsDto.theme());
-        model.addAttribute("dateFormatPreference", userSettingsDto.dateFormat());
-        model.addAttribute("profileVisibilityPreference", userSettingsDto.profileVisibility());
-        model.addAttribute("profileDiscoverablePreference", userSettingsDto.profileDiscoverable());
-        model.addAttribute("currentEmail", userDetails.getUsername());
-
-        return "site/settings";
-    }
-
-    @GetMapping("/account-deleted")
-    public String accountDeleted(Model model) {
-        model.addAttribute("welcomePage", WebSecurityConfig.WELCOME_URL_MATCHER);
-
-        return "site/account-deleted-confirmation";
-    }
-
-    @GetMapping("/profile")
-    public String profile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        model.addAttribute("homePath", WebSecurityConfig.HOME_URL_MATCHER);
-        model.addAttribute("updateProfilePath", ApiConfig.API_BASE_PATH + "/user/update-profile");
-        model.addAttribute("avatarUploadPath", ApiConfig.API_BASE_PATH + "/user/upload-avatar");
-        model.addAttribute("avatarUrl", this.userService.getUrlToAvatar(userDetails.getUsername()));
-        model.addAttribute("avatarRefreshPath", ApiConfig.API_BASE_PATH + "/user/avatar");
-
-        UserProfileDto profileDto = UserMapper.toDto(this.userService.getUser(userDetails.getUsername()));
-        model.addAttribute("name", profileDto.name());
-        model.addAttribute("username", profileDto.username());
-        model.addAttribute("about", profileDto.about());
-        model.addAttribute("location", profileDto.location());
-        model.addAttribute("website", profileDto.website());
-
-        return "site/profile";
+        return "site/public-projects";
     }
 }
