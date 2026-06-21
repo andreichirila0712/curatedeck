@@ -1,0 +1,19 @@
+package andrei.chirila.prove_yourself.infrastructure.dtos;
+
+import andrei.chirila.prove_yourself.domain.validations.ValidWebsiteUrl;
+import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
+
+public record ProjectUpdateRequest(
+        @Size(max = 16) String role,
+        @Size(max = 36) String title,
+        @Size(max = 156) String technologies,
+        @Size(max = 144) String challenge,
+        @Size(max = 144) String solution,
+        @Size(max = 144) String result,
+        @ValidWebsiteUrl String live,
+        @ValidWebsiteUrl String repository,
+        LocalDate startDate,
+        LocalDate endDate) {
+}
