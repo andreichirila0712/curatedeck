@@ -1,151 +1,122 @@
 package andrei.chirila.prove_yourself.infrastructure.config;
 
-import andrei.chirila.prove_yourself.domain.Role;
-import andrei.chirila.prove_yourself.domain.services.AuthService;
-import andrei.chirila.prove_yourself.infrastructure.filters.JwtAuthenticationFilter;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
-import org.aopalliance.intercept.MethodInvocation;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseCookie;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authorization.DefaultAuthorizationManagerFactory;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    private final AuthService authService;
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    @Value("${cookie.name}")
-    private String cookieName;
-    @Value("${cookie.http-only}")
-    private boolean cookieHttpOnly;
-    @Value("${cookie.same-site}")
-    private String cookieSameSite;
-    @Value("${cookie.path}")
-    private String cookiePath;
-
-    public WebSecurityConfig(AuthService authService, UserDetailsService userDetailsService, PasswordEncoder passwordEncoder) {
-        this.authService = authService;
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public static final String LOGIN_AUTH_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/login";
-    public static final String LOGIN_FAILURE_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/login?failure";
-    public static final String REGISTRATION_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/register";
-    public static final String CREATE_USER_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/create-user";
-    public static final String ACCOUNT_VERIFICATION_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/verify";
-    public static final String LOGOUT_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/logout";
-    public static final String HOME_URL_MATCHER = ApiConfig.API_BASE_PATH + "/home";
-    public static final String WELCOME_URL_MATCHER = ApiConfig.API_BASE_PATH + "/welcome";
-    public static final String LOGIN_URL_MATCHER = ApiConfig.API_BASE_PATH  + "/login";
-    public static final String PRIVACY_POLICY_URL_MATCHER = ApiConfig.API_BASE_PATH + "/privacy-policy";
-    public static final String TERMS_OF_SERVICE_URL_MATCHER = ApiConfig.API_BASE_PATH + "/tos";
-    public static final String EMAIL_CHANGE_CONFIRMATION_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/confirm-email-change";
-    public static final String PASSWORD_CHANGE_CONFIRMATION_URL_MATCHER = ApiConfig.API_BASE_PATH + "/auth/confirm-password-change";
-    public static final String ACCOUNT_DELETED_CONFIRMATION_URL_MATCHER = ApiConfig.API_BASE_PATH + "/account-deleted";
-    final String BASE_URL_MATCHER = ApiConfig.API_BASE_PATH + "/**";
+    public static final String LANDING_PAGE_URL = "/api/public/welcome";
+    public static final String LOGIN = "/oauth2/authorization/keycloak";
+    public static final String POLICY = "/api/public/privacy";
+    public static final String TERMS = "/api/public/terms";
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtFilter) throws  Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) {
         http
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/vendor/**").permitAll()
-                        .requestMatchers("/vaadin/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, WELCOME_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.POST, LOGIN_AUTH_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, REGISTRATION_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.POST, CREATE_USER_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, ACCOUNT_VERIFICATION_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, LOGIN_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, PRIVACY_POLICY_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, TERMS_OF_SERVICE_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, EMAIL_CHANGE_CONFIRMATION_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, PASSWORD_CHANGE_CONFIRMATION_URL_MATCHER).permitAll()
-                        .requestMatchers(HttpMethod.GET, ACCOUNT_DELETED_CONFIRMATION_URL_MATCHER).permitAll()
-                        .requestMatchers(BASE_URL_MATCHER).authenticated()
-                        .anyRequest().denyAll()
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/public/**", "/api/user/delete-account-db", "/api/user/register", "/api/user/verify-email"))
+                .oauth2Login(login ->
+                    login.defaultSuccessUrl("/api/home", true)
                 )
                 .logout(logout -> {
-                    logout
-                            .logoutRequestMatcher(PathPatternRequestMatcher.withDefaults().matcher(HttpMethod.POST, LOGOUT_URL_MATCHER))
-                            .logoutSuccessHandler((request, response, authentication) -> {
-                                ResponseCookie expiredCookie = ResponseCookie.from(cookieName, "")
-                                        .httpOnly(cookieHttpOnly)
-                                        .secure(false)
-                                        .maxAge(0)
-                                        .sameSite(cookieSameSite)
-                                        .path(cookiePath)
-                                        .build();
+                    logout.logoutUrl("/logout")
+                            .invalidateHttpSession(true)
+                            .clearAuthentication(true)
+                            .deleteCookies("JSESSIONID");
 
-                                response.addHeader(HttpHeaders.SET_COOKIE, expiredCookie.toString());
-                                response.sendRedirect(WebSecurityConfig.WELCOME_URL_MATCHER);
-                            });
+
+                    var logoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+                    logoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}/" + LANDING_PAGE_URL);
+                    logout.logoutSuccessHandler(logoutSuccessHandler);
+
                 })
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement((sm) -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
-                .authenticationManager(authenticationManager())
-                .exceptionHandling(handler -> handler
+                .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                        }));
+                            response.getWriter().write("Unauthorized");
+                        }))
+                .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("/terms.md").permitAll()
+                        .requestMatchers("/privacy.md").permitAll()
+                        .requestMatchers("/vaadin/**").permitAll()
+                        .requestMatchers("/vendor/**").permitAll()
+                        .requestMatchers("/api/public/**").permitAll()
+                        .requestMatchers("/api/project/all-public").permitAll()
+                        .requestMatchers("/api/user/delete-account-db").permitAll()
+                        .requestMatchers("/api/user/register").permitAll()
+                        .requestMatchers("/api/user/verify-email").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                );
 
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
-
-        ProviderManager providerManager = new ProviderManager(authenticationProvider);
-        providerManager.setEraseCredentialsAfterAuthentication(true);
-
-        return providerManager;
+    public AuthoritiesConverter realmRolesAuthoritiesConverter() {
+        return claims -> {
+            var realmAccess = Optional.ofNullable((Map<String, Object>) claims.get("realm_access"));
+            var roles = realmAccess.flatMap(map -> Optional.ofNullable((List<String>) map.get("roles")));
+            return roles.map(List::stream)
+                    .orElse(Stream.empty())
+                    .map(SimpleGrantedAuthority::new)
+                    .map(GrantedAuthority.class::cast)
+                    .toList();
+        };
     }
 
     @Bean
-    public MethodSecurityExpressionHandler methodSecurityExpressionHandler() {
-        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        DefaultAuthorizationManagerFactory<MethodInvocation> factory = new DefaultAuthorizationManagerFactory<>();
-        factory.setRoleHierarchy(roleHierarchy());
-        expressionHandler.setAuthorizationManagerFactory(factory);
-
-        return expressionHandler;
+    public GrantedAuthoritiesMapper authenticationConverter(AuthoritiesConverter authoritiesConverter) {
+        return authorities ->
+                authorities.stream()
+                        .filter(authority -> authority instanceof OidcUserAuthority)
+                        .map(OidcUserAuthority.class::cast)
+                        .map(OidcUserAuthority::getIdToken)
+                        .map(OidcIdToken::getClaims)
+                        .map(authoritiesConverter::convert)
+                        .flatMap(roles -> roles.stream())
+                        .collect(Collectors.toSet());
     }
 
     @Bean
-    public RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.withDefaultRolePrefix()
-                .role(Role.ADMIN.name())
-                .implies(Role.USER.name())
-                .build();
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("https://curatedeck.com"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }

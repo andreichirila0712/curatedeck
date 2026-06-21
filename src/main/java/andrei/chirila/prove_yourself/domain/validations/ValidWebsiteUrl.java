@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 @Documented
 @Constraint(validatedBy = WebsiteUrlValidator.class)
-@Target(ElementType.PARAMETER)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidWebsiteUrl {
     String message() default "Invalid URL";

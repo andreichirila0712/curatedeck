@@ -15,13 +15,12 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.UUID;
 
 @Component
 public class S3Utility {
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
-    @Value("${bucket.name}")
+    @Value("${garage.bucket}")
     private String bucket;
     Logger logger = LoggerFactory.getLogger(S3Utility.class);
 
@@ -30,7 +29,7 @@ public class S3Utility {
         this.s3Presigner = s3Presigner;
     }
 
-    public String uploadFile(MultipartFile file, String name) {
+    public String uploadFile(MultipartFile file, String name, String type) {
         String contentType = file.getContentType();
 
         assert contentType != null;
@@ -40,11 +39,12 @@ public class S3Utility {
             default -> ".jpeg";
         };
 
+        String key = "user/" + name + "/" + type + "/" + file.getName() + extension;
         try {
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(bucket)
                     .contentType(contentType)
-                    .key(name + "/" + file.getName() + extension)
+                    .key(key)
                     .build();
 
             RequestBody body = RequestBody.fromBytes(file.getBytes());
@@ -53,7 +53,7 @@ public class S3Utility {
             logger.error("Could not access file's content", ex);
         }
 
-        return name + "/" + file.getName() + extension;
+        return key;
     }
 
     public String createPresignedUrl(String objectName) {
@@ -63,7 +63,7 @@ public class S3Utility {
                 .build();
 
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(10))
+                .signatureDuration(Duration.ofHours(24))
                 .getObjectRequest(objectRequest)
                 .build();
 
