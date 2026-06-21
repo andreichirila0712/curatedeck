@@ -1,21 +1,35 @@
 package andrei.chirila.prove_yourself.domain.services;
 
 import andrei.chirila.prove_yourself.domain.User;
-import andrei.chirila.prove_yourself.infrastructure.dtos.UserSettingsDto;
+import andrei.chirila.prove_yourself.infrastructure.dtos.SettingsUpdateRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
-    UserSettingsDto getUserSettings(String email);
-    void updateLanguage(String email, String language);
-    void updateTheme(String email, String theme);
-    void updateDateFormat(String email, String dateFormat);
-    void updateVisibility(String email, String visibility);
-    void changeEmail(String email, String newEmail);
-    void changePassword(String email, String newPassword, String inputPassword);
-    boolean checkPassword(String email, String password);
-    void deleteAccount(String email);
-    void updateProfile(String name, String username, String about, String location, String website, String email);
-    void uploadAvatar(MultipartFile avatar, String email);
-    String getUrlToAvatar(String email);
-    User getUser(String email);
+    SettingsUpdateRequest getUserSettings(String id);
+
+    void updateLanguage(String id, String language);
+
+    void updateTheme(String id, String theme);
+
+    void updateDateFormat(String id, String dateFormat);
+
+    void changeEmail(String id);
+
+    void changePassword(String id);
+
+    void deleteAccount(String id);
+
+    void deleteAccountDb(String id);
+
+    void updateKeycloakUserProfile(String id);
+
+    void uploadAvatar(MultipartFile avatar, String id);
+
+    String getUrlToAvatar(String id);
+
+    User getUser(String id);
+
+    void createAccount(String id);
+
+    void activateAccount(String id);
 }
