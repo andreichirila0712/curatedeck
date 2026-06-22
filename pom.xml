@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>andrei.chirila</groupId>
-	<artifactId>prove-yourself</artifactId>
+	<artifactId>curatedeck</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>prove-yourself</name>
+	<name>curatedeck</name>
 	<description>A place to showcase your projects</description>
 	<url/>
 	<licenses>
