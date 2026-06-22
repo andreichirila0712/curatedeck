@@ -1,12 +1,11 @@
-<footer th:fragment="footer" class="container">
-    <nav style="justify-content: center;">
-        <ul>
-            <li>©</li>
-            <li>Exhibition Land</li>
-            <li>·</li>
-            <li><a th:href="${privacyPolicy}">Privacy Policy</a></li>
-            <li>·</li>
-            <li><a th:href="${termsOfService}">Terms of Service</a></li>
-        </ul>
-    </nav>
+<footer th:fragment="footer">
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; justify-content: center;">
+        <p style="margin: 0; color: var(--lumo-secondary-text-color);">© CurateDeck ·</p>
+        <a style="color: var(--lumo-secondary-text-color);" href="/api/public/privacy">Privacy Policy</a>
+        <p style="margin: 0; color: var(--lumo-secondary-text-color)">·</p>
+        <a style="color: var(--lumo-secondary-text-color)" href="/api/public/terms">Terms of Service</a>
+        <a href='https://ko-fi.com/J6J421U95Q' target='_blank'><img height='36' style='border:0px;height:36px;'
+                                                                    src='https://storage.ko-fi.com/cdn/kofi2.png?v=6'
+                                                                    border='0' alt='Buy Me a Coffee at ko-fi.com'/></a>
+    </vaadin-horizontal-layout>
 </footer>

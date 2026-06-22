@@ -1,7 +1,29 @@
-<header class="container" th:fragment="header-nav">
-    <nav>
-        <ul>
-            <li><a th:href="${homePath}" role="button">Home</a></li>
-        </ul>
-    </nav>
-</header>
+<div th:fragment="header">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
+        <meta name="_csrf" th:content="${_csrf.token}">
+        <script th:src="@{/vendor/htmx.min.js}"></script>
+        <script th:src="@{/vendor/_hyperscript.min.js}"></script>
+        <link rel="stylesheet" th:href="@{/vaadin/style.css}">
+        <script type="module" th:src="@{/vaadin/vaadin-bundle.js}"></script>
+        <title id="title-content"></title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+            }
+
+            main {
+                flex-grow: 1;
+                width: 100%;
+                margin: 0 auto;
+                padding: 1rem;
+                box-sizing: border-box;
+            }
+        </style>
+    </head>
+</div>
