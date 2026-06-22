@@ -1,266 +1,158 @@
-<!--CHANGE EMAIL-->
-<dialog open id="email-sent-success-modal" th:fragment="email-sent-success-modal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Email confirmation sent
-            </p>
-        </header>
-        <p>A confirmation link has been sent to your new email address to confirm your changes.</p>
-    </article>
-</dialog>
-<dialog open id="email-sent-error-modal" th:fragment="email-sent-error-modal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Email already in use
-            </p>
-        </header>
-        <p>This email is already in use. Please try using a different one.</p>
-    </article>
-</dialog>
-<dialog open id="email-token-not-found" th:fragment="email-token-not-found">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change email
-            </p>
-        </header>
-        <p>There was an error while trying to generate a confirmation link for the new email address. Please try
-            again.</p>
-    </article>
-</dialog>
-<dialog open id="email-token-conflict" th:fragment="email-token-conflict">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change email
-            </p>
-        </header>
-        <p>A confirmation link has already been sent. You may attempt another request later.</p>
-    </article>
-</dialog>
-<dialog open id="email-token-expired" th:fragment="email-token-expired">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change email
-            </p>
-        </header>
-        <p>This confirmation link is expired. Please generate a new one.</p>
-    </article>
-</dialog>
-<dialog open id="email-token-internal" th:fragment="email-token-internal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change email
-            </p>
-        </header>
-        <p>This confirmation link has been generated for an email no longer in use.</p>
-    </article>
-</dialog>
-<!--CHANGE PASSWORD-->
-<dialog id="password-change-modal" th:fragment="password-change-modal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change password
-            </p>
-        </header>
-        <form>
-            <fieldset>
-                <label>
-                    Current password
-                    <input type="password"
-                           minlength="8"
-                           name="currentPassword"
-                           id="currentPassword"
-                           th:aria-invalid="${passwordValid}"
-                           th:hx-get="${checkCurrentPasswordPath}"
-                           hx-trigger="keyup changed delay:500ms"
-                           aria-describedby="password-valid-helper"
-                           hx-target="#password-feedback"
-                    />
-                    <span th:fragment="password-feedback" id="password-feedback">
-                            <small id="password-valid-helper" th:if="${passwordValid} != null"
-                                   th:text="${passwordValid ? 'Valid' : 'Invalid'}"
-                                   th:attr="password-valid=${passwordValid ? 'true' : 'false'}">
-                            </small>
-                        </span>
-                </label>
+<vaadin-dialog keep-in-viewport
+               opened
+               th:fragment="change-email"
+               _="on closed put '' into #dialog-container"
+>
+    <script th:inline="javascript">
+        {
+            const dialog = document.querySelector('vaadin-dialog');
 
-            </fieldset>
-            <fieldset>
-                <label>
-                    New password
-                    <input type="password"
-                           minlength="8"
-                           name="newPassword"
-                           id="newPassword"
-                           disabled
-                           _="on htmx:afterSwap from #password-feedback set valid to #password-valid-helper's @password-valid
-                                 if valid is 'true'
-                                    remove @disabled from me
-                                 else
-                                    add @disabled to me
-                                 end"
-                    />
-                </label>
-            </fieldset>
-        </form>
-        <footer>
-            <div class="form-buttons-positioning">
-                <button type="button" class="pico-background-grey-500" aria-label="Close"
-                        th:_="'on click remove @open from closest <dialog/>'">Close
-                </button>
-                <button id="submit-pass-btn" class="pico-background-green-500" type="button"
-                        th:hx-patch="${changePasswordPath}"
-                        hx-include="#newPassword, #currentPassword"
-                        _="on htmx:beforeRequest add @aria-busy='true' to #submit-pass-btn
-                            on htmx:afterRequest remove @aria-busy='true' from #submit-pass-btn then remove @open from closest <dialog/>"
-                        hx-target="#success"
-                        hx-target-401="#error" hx-target-404="#error"
-                        hx-target-409="#error" hx-target-410="#error"
-                        hx-swap="innerHTML"
-                >
-                    Apply
-                </button>
-            </div>
-        </footer>
-    </article>
-</dialog>
-<dialog open id="password-sent-success-modal" th:fragment="password-sent-success-modal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Email confirmation sent
-            </p>
-        </header>
-        <p>A confirmation link has been sent to your email address to confirm your new password.</p>
-    </article>
-</dialog>
-<dialog open id="password-token-not-found" th:fragment="password-token-not-found">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change password
-            </p>
-        </header>
-        <p>There was an error while trying to generate a confirmation link for the new password. Please try again
-            later.</p>
-    </article>
-</dialog>
-<dialog open id="password-token-conflict" th:fragment="password-token-conflict">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change password
-            </p>
-        </header>
-        <p>A confirmation link has already been sent. You may attempt a new request later.</p>
-    </article>
-</dialog>
-<dialog open id="password-token-expired" th:fragment="password-token-expired">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change password
-            </p>
-        </header>
-        <p>This confirmation link is expired. Please generate a new one.</p>
-    </article>
-</dialog>
-<dialog open id="password-token-internal" th:fragment="password-token-internal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change password
-            </p>
-        </header>
-    </article>
-    <p>This confirmation link has been generated for a user no longer existing.</p>
-</dialog>
-<dialog open id="password-token-unauthorized" th:fragment="password-token-unauthorized">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Change password
-            </p>
-        </header>
-        <p>Bad credentials. Please make sure you type them correctly.</p>
-    </article>
-</dialog>
-<!--ACCOUNT DELETION-->
-<dialog id="account-deletion-modal" th:fragment="account-deletion-modal">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Are you sure?
-            </p>
-        </header>
-        <p>This action will permanently delete your account and all data associated with it. The account cannot be
-            restored after its deletion.</p>
-        <footer>
-            <div class="form-buttons-positioning">
-                <button aria-label="Close" th:_="'on click remove @open from closest <dialog/>'">Close</button>
-                <button id="delete-account-btn" class="pico-background-red-500"
-                        th:hx-post="${deleteAccountPath}"
-                        _="on htmx:beforeRequest add @aria-busy='true' to #delete-account-btn
-                on htmx:afterRequest remove @aria-busy='true' from #delete-account-btn"
-                        hx-target-500="#error"
-                        hx-swap="innerHTML"
-                >Yes, I'm sure</button>
-            </div>
-        </footer>
-    </article>
-</dialog>
-<dialog id="account-deleted" th:fragment="account-deleted">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center">
-                Account deleted
-            </p>
-        </header>
-        <p>Your account has been successfully deleted. You will be logged out.</p>
-    </article>
-</dialog>
-<!--DATABASE-->
-<dialog id="db-operation-failed" th:fragment="db-operation-failed">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Operation failed
-            </p>
-        </header>
-        <p>Something went wrong and the operation failed. Please try again later.</p>
-    </article>
-</dialog>
+            dialog.headerRenderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                dialog.headerTitle = 'Change email request';
+                const headerButton = document.createElement('vaadin-button');
+                headerButton.setAttribute('theme', 'tertiary');
+                headerButton.addEventListener('click', function () {
+                    document.querySelector('vaadin-dialog').opened = false;
+                });
+
+                const buttonIcon = document.createElement('vaadin-icon');
+                buttonIcon.setAttribute('icon', 'vaadin:close');
+                headerButton.appendChild(buttonIcon);
+
+                root.appendChild(headerButton);
+            };
+
+            dialog.renderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                const text = document.createElement('p');
+                text.setAttribute('style', 'max-width: 300px;');
+                text.textContent = 'A link has been sent to your email address to update it.';
+
+                root.appendChild(text);
+            };
+        }
+    </script>
+</vaadin-dialog>
+<vaadin-dialog keep-in-viewport
+               opened
+               th:fragment="change-password"
+               _="on closed put '' into #dialog-container"
+>
+    <script th:inline="javascript">
+        {
+            const dialog = document.querySelector('vaadin-dialog');
+
+            dialog.headerRenderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                dialog.headerTitle = 'Change password request';
+                const headerButton = document.createElement('vaadin-button');
+                headerButton.setAttribute('theme', 'tertiary');
+                headerButton.addEventListener('click', function () {
+                    document.querySelector('vaadin-dialog').opened = false;
+                });
+
+                const buttonIcon = document.createElement('vaadin-icon');
+                buttonIcon.setAttribute('icon', 'vaadin:close');
+                headerButton.appendChild(buttonIcon);
+
+                root.appendChild(headerButton);
+            }
+            dialog.renderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                const text = document.createElement('p');
+                text.setAttribute('style', 'max-width: 300px;');
+                text.textContent = 'A link has been sent to your email address to update your password.';
+
+                root.appendChild(text);
+            };
+        }
+    </script>
+</vaadin-dialog>
+<vaadin-dialog keep-in-viewport
+               opened
+               th:fragment="delete-account"
+               _="on closed put '' into #dialog-container"
+>
+    <script th:inline="javascript">
+        {
+            const dialog = document.querySelector('vaadin-dialog');
+
+            dialog.headerRenderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                dialog.headerTitle = 'Delete account request';
+                const headerButton = document.createElement('vaadin-button');
+                headerButton.setAttribute('theme', 'tertiary');
+                headerButton.addEventListener('click', function () {
+                    document.querySelector('vaadin-dialog').opened = false;
+                });
+
+                const buttonIcon = document.createElement('vaadin-icon');
+                buttonIcon.setAttribute('icon', 'vaadin:close');
+                headerButton.appendChild(buttonIcon);
+
+                root.appendChild(headerButton);
+            };
+
+            dialog.renderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                dialog.addEventListener('closed', (event) => {
+                    document.getElementById('logout-form').submit();
+                });
+
+                const text = document.createElement('p');
+                text.setAttribute('style', 'max-width: 300px;');
+                text.textContent = 'A link has been sent to your email address to delete your account. Upon closing this window you will be automatically logged out.';
+
+                root.appendChild(text);
+            };
+        }
+    </script>
+    <form hidden id="logout-form" method="post" action="/logout">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    </form>
+</vaadin-dialog>
 <!--PROFILE-->
-<dialog id="update-profile" th:fragment="update-profile">
-    <article>
-        <header>
-            <div th:replace="~{layout/modal-button-response :: close-btn}"></div>
-            <p style="display: flex; justify-content: center;">
-                Profile updated
-            </p>
-        </header>
-        <p>Your profile has been updated successfully.</p>
-    </article>
-</dialog>
+<vaadin-dialog keep-in-viewport
+               opened
+               th:fragment="update-profile-personal-info"
+               _="on closed put '' into #response"
+>
+    <script th:inline="javascript">
+        {
+            const dialog = document.querySelector('vaadin-dialog');
+
+            dialog.headerRenderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                dialog.headerTitle = 'Change personal info request';
+                const headerButton = document.createElement('vaadin-button');
+                headerButton.setAttribute('theme', 'tertiary');
+                headerButton.addEventListener('click', function () {
+                    document.querySelector('vaadin-dialog').opened = false;
+                });
+
+                const buttonIcon = document.createElement('vaadin-icon');
+                buttonIcon.setAttribute('icon', 'vaadin:close');
+                headerButton.appendChild(buttonIcon);
+
+                root.appendChild(headerButton);
+            }
+            dialog.renderer = function (root, dialog) {
+                if (root.firstElementChild) return;
+
+                const text = document.createElement('p');
+                text.setAttribute('style', 'max-width: 300px;');
+                text.textContent = 'A link has been sent to your email address to update your personal info.';
+
+                root.appendChild(text);
+            };
+        }
+    </script>
+</vaadin-dialog>

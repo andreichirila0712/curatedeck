@@ -1,0 +1,25 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations:
+      - classpath:/db/{vendor}/common
+      - classpath:/db/{vendor}/test
+keycloak:
+  realm: test
+  client-id: test
+  client-secret: test
+  url: test
+header:
+  secret: test
+garage:
+  bucket: test
+  endpoint: https://test.com
+  key: test
+  secret: test

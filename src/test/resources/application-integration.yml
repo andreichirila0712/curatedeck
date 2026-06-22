@@ -1,0 +1,39 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    locations:
+      - classpath:/db/{vendor}/common
+      - classpath:/db/{vendor}/test
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: test-client
+            client-secret: test-secret
+            authorization-grant-type: client_credentials
+            scope:
+              - openid
+        provider:
+          keycloak:
+            issuer-uri: placeholder
+aws:
+  s3:
+    endpoint: placeholder
+  region: us-east-1
+  accessKeyId: placeholder
+  secretAccessKey: placeholder
+localstack:
+  auth: ${LOCALSTACK_AUTH_TOKEN}
+garage:
+  bucket: test-bucket
+  endpoint: ${GARAGE_ENDPOINT}
+  key: ${GARAGE_ACCESS_KEY}
+  secret: ${GARAGE_SECRET_KEY}

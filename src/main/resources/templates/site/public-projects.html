@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script>
+        const saved = localStorage.getItem('theme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('theme', saved || preferred);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
+    <script th:src="@{/vendor/htmx.min.js}"></script>
+    <script th:src="@{/vendor/_hyperscript.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/vaadin/style.css}">
+    <script type="module" th:src="@{/vaadin/vaadin-bundle.js}"></script>
+    <title>Public projects</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex-grow: 1;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .public-projects-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        vaadin-card {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<div th:if="${authenticated}">
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <vaadin-avatar th:img="${avatar}"></vaadin-avatar>
+        <b th:text="'Welcome, ' + ${name}"></b>
+        <div style="flex-grow: 1;"></div>
+        <div id="particular-content" hx-swap-oob="true">
+            <vaadin-tabs>
+                <vaadin-tab>Public projects</vaadin-tab>
+                <vaadin-tab><a href="/api/home">Home</a></vaadin-tab>
+            </vaadin-tabs>
+        </div>
+    </vaadin-horizontal-layout>
+</div>
+<nav th:unless="${authenticated}">
+    <vaadin-horizontal-layout theme="spacing padding"
+                              style="align-items: center; width: 100%; box-sizing: border-box;">
+        <a href="/api/public/welcome">Welcome</a>
+    </vaadin-horizontal-layout>
+</nav>
+<main id="main-content" th:fragment="public-projects-content">
+    <div id="public-projects-container" class="public-projects-container"></div>
+
+    <div hidden th:hx-get="${projects}" hx-trigger="load" hx-target="#public-projects-container"></div>
+</main>
+<div th:replace="~{layout/footer}"></div>
+</body>
+</html>

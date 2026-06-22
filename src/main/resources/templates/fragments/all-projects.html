@@ -1,0 +1,36 @@
+<div th:fragment="all-projects" th:each="project : ${items}">
+    <vaadin-card theme="outlined elevated horizontal cover-media" th:id="'project-card-' + ${project.getId()}">
+        <img th:id="'project-thumbnail-' + ${project.getId()}" slot="media" alt="Thumbnail"
+             th:if="${project.getMedia() != null and project.getMedia().getThumbnail() != null}"
+             th:hx-get="'/api/project/' + ${project.getId()} + '/media/thumbnail'" hx-trigger="load"
+             _="on htmx:after:request
+                  set my.src to event.detail.ctx.responseText"
+             hx-swap="none"/>
+        <vaadin-icon slot="media" th:unless="${project.getMedia() != null and project.getMedia().getThumbnail() != null}"
+                     icon="vaadin:file-picture"
+                     style="background: rgba(0, 0, 0, 0.2);"
+        ></vaadin-icon>
+        <div slot="title" th:text="${project.getTitle()}"></div>
+        <div slot="subtitle" th:text="${project.getRole()}"></div>
+        <div slot="header-suffix">
+            <vaadin-button th:_="'on click go to /api/project/' + ${project.getId()} + '/view'">
+                <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                View
+            </vaadin-button>
+            <vaadin-button th:_="'on click go to /api/project/' + ${project.getId()} + '/edit'">
+                <vaadin-icon icon="vaadin:edit"></vaadin-icon>
+                Edit
+            </vaadin-button>
+        </div>
+        <div slot="footer">
+            <div th:text="${project.getStartDate().getMonth()} + ' ' + ${project.getStartDate().getYear()} +
+             ' - ' + ${project.getEndDate().getMonth()} + ' ' + ${project.getEndDate().getYear()}"></div>
+        </div>
+        <style>
+            ::part(footer) {
+                display: flex;
+                justify-content: flex-end;
+            }
+        </style>
+    </vaadin-card>
+</div>

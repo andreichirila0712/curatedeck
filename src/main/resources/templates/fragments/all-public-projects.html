@@ -1,0 +1,44 @@
+<div th:fragment="all-public-projects" th:each="project : ${projects}">
+    <vaadin-card theme="outlined elevated horizontal cover-media" id="project-card">
+        <img th:if="${project.thumbnail() != null} " alt="Thumbnail" th:id="'project-thumbnail-' + ${project.id()}" slot="media"
+             th:src="${project.thumbnail()}"/>
+        <vaadin-icon slot="media"
+                     th:unless="${project.thumbnail() != null}"
+                     icon="vaadin:file-picture"
+                     style="background: rgba(0, 0, 0, 0.2)">
+        </vaadin-icon>
+        <div slot="title" th:text="${project.title()}"></div>
+        <div slot="subtitle" th:text="${project.role()}"></div>
+        <div slot="header-suffix">
+            <vaadin-button th:_="'on click go to /api/public/projects/project/' + ${project.id()}">
+                <vaadin-icon icon="vaadin:eye"></vaadin-icon>
+                View
+            </vaadin-button>
+        </div>
+        <div slot="footer">
+            <vaadin-horizontal-layout theme="spacing padding">
+                <div id="technologies-container"></div>
+            </vaadin-horizontal-layout>
+        </div>
+        <script th:inline="javascript">
+            {
+                const technologyContainer = document.getElementById('technologies-container');
+
+                let project = /*[[${project}]]*/'';
+                let technologies = project.technologies.split(',');
+
+                const technologiesColored = technologies.map(technology => {
+                    const hue = Math.floor(Math.random() * 360);
+                    const color = `hsl(${hue}, 85%, 50%)`;
+
+                    return `<span style="color: ${color}; font-weight: bold;">${technology}</span>`;
+                });
+
+                technologies = technologiesColored.join(', ');
+
+                document.getElementById('technologies-container').innerHTML = technologies;
+            }
+        </script>
+    </vaadin-card>
+
+</div>
