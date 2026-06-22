@@ -19,108 +19,43 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ElException.class)
-    public ResponseEntity<String> handleElException(ElException ex, HttpServletResponse response) {
+    public String handleElException(ElException ex, HttpServletResponse response) {
         final ElErrorMessage errorMessage = ex.getErrorMessage();
 
         switch (errorMessage) {
             case USER_NOT_FOUND -> {
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.USER_NOT_FOUND));
-            }
-
-            case USER_ALREADY_VERIFIED -> {
-                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.USER_ALREADY_VERIFIED));
-            }
-
-            case USER_NOT_VERIFIED -> {
-                return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.USER_NOT_VERIFIED));
-            }
-
-            case EMAIL_ALREADY_EXISTS -> {
-                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.EMAIL_ALREADY_EXISTS));
-            }
-
-            case ACCOUNT_ACTIVATION_TOKEN_ALREADY_EXISTS -> {
-                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.ACCOUNT_ACTIVATION_TOKEN_ALREADY_EXISTS));
-            }
-
-            case ACCOUNT_ACTIVATION_TOKEN_NOT_FOUND -> {
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.ACCOUNT_ACTIVATION_TOKEN_NOT_FOUND));
-            }
-
-            case EMAIL_CHANGE_TOKEN_NOT_FOUND -> {
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.EMAIL_CHANGE_TOKEN_NOT_FOUND));
-            }
-
-            case EMAIL_CHANGE_TOKEN_ALREADY_EXISTS -> {
-                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.EMAIL_CHANGE_TOKEN_ALREADY_EXISTS));
-            }
-
-            case EMAIL_CHANGE_TOKEN_IS_EXPIRED -> {
-                return ResponseEntity.status(HttpServletResponse.SC_GONE)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.EMAIL_CHANGE_TOKEN_IS_EXPIRED));
-            }
-
-            case PASSWORD_CHANGE_TOKEN_NOT_FOUND -> {
-                return ResponseEntity.status(HttpServletResponse.SC_NOT_FOUND)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.PASSWORD_CHANGE_TOKEN_NOT_FOUND));
-            }
-
-            case PASSWORD_CHANGE_TOKEN_ALREADY_EXISTS -> {
-                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.PASSWORD_CHANGE_TOKEN_ALREADY_EXISTS));
-            }
-
-            case PASSWORD_CHANGE_TOKEN_IS_EXPIRED -> {
-                return ResponseEntity.status(HttpServletResponse.SC_GONE)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.PASSWORD_CHANGE_TOKEN_IS_EXPIRED));
-            }
-
-            case BAD_CREDENTIALS -> {
-                return ResponseEntity.status(HttpServletResponse.SC_UNAUTHORIZED)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.BAD_CREDENTIALS));
-            }
-
-            case DATA_INTEGRITY_VIOLATION -> {
-               return ResponseEntity.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-                       .body(ElErrorMessage.getDescription(ElErrorMessage.DATA_INTEGRITY_VIOLATION));
-            }
-
-            case USERNAME_IS_EMPTY -> {
-                return ResponseEntity.badRequest()
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.USERNAME_IS_EMPTY));
-            }
-
-            case USERNAME_ALREADY_EXISTS -> {
-                return ResponseEntity.status(HttpServletResponse.SC_CONFLICT)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.USERNAME_ALREADY_EXISTS));
-            }
-
-            case NAME_IS_EMPTY -> {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.NAME_IS_EMPTY));
-            }
-
-            case ABOUT_IS_TOO_LENGTHY -> {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.ABOUT_IS_TOO_LENGTHY));
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return "fragments/notifications :: user-not-found";
             }
 
             case URL_DOES_NOT_MATCH_PATTERN -> {
-                return ResponseEntity.status(HttpServletResponse.SC_BAD_REQUEST)
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.URL_DOES_NOT_MATCH_PATTERN));
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "fragments/notifications :: url-pattern-mismatch";
+            }
+
+            case PROJECT_NOT_FOUND -> {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return "fragments/notifications :: project-not-found";
+            }
+
+            case PROJECT_START_END_DATES_MISMATCH -> {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "fragments/notifications :: project-dates-mismatch";
+            }
+
+            case INTERNAL_SERVER_ERROR -> {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return "fragments/notifications :: internal-server-error";
+            }
+
+            case BAD_REQUEST -> {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "fragments/notifications :: bad-request";
             }
 
             default -> {
-                return ResponseEntity.internalServerError()
-                        .body(ElErrorMessage.getDescription(ElErrorMessage.INTERNAL_SERVER_ERROR));
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return "fragments/notifications :: default";
             }
         }
     }
