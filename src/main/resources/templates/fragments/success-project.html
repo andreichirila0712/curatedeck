@@ -1,0 +1,26 @@
+<div th:fragment="add-project-success">
+    <vaadin-notification id="add-project-success" position="bottom-end">
+        <script>
+            {
+                const notification = document.getElementById('add-project-success');
+                notification.renderer = function (root) {
+                    if (root.firstElementChild) return;
+
+                    const layout = document.createElement('vaadin-horizontal-layout');
+                    layout.setAttribute('theme', 'spacing');
+                    layout.style.cssText = 'align-items: centre; min-width: 350px;'
+
+                    const icon = document.createElement('vaadin-icon');
+                    icon.setAttribute('icon', 'vaadin:check-icon');
+
+                    const text = document.createElement('div');
+                    text.textContent = 'Project added!';
+
+                    layout.appendChild(icon);
+                    layout.appendChild(text);
+                    root.appendChild(layout);
+                };
+            }
+        </script>
+    </vaadin-notification>
+</div>

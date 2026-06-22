@@ -17,5 +17,5 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Run tests
-        run: ./mvnw verify -Pdev
+      - name: Run the tests
+        run: ./mvnw verify -Ptest

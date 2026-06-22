@@ -1,32 +1,46 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
-    <link rel="stylesheet" href="/css/prove.css" th:href="@{/css/prove.css}">
-    <title>Home</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:theme="${theme}">
+<div th:replace="~{layout/header}"></div>
 <body>
-<nav>
-    <ul>
-        <li><b>Exhibition Land</b></li>
-    </ul>
-    <ul>
-        <li><a th:href="${projectsPath}" class="secondary">Projects</a></li>
-        <li>
-            <details class="dropdown">
-                <summary>
-                    Account
-                </summary>
-                <ul dir="rtl">
-                    <li><a th:href="${profilePath}">Profile</a></li>
-                    <li><a th:href="${settingsPath}">Settings</a></li>
-                    <li><button type=submit form="logout-form">Logout</button></li>
-                </ul>
-            </details>
-        </li>
-    </ul>
+<nav hx-boost="true" hx-target="#main-content" hx-select="#main-content" hx-swap="outerHTML">
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <vaadin-avatar th:img="${avatar}"></vaadin-avatar>
+        <b th:text="'Welcome, ' + ${name}"></b>
+        <div style="flex-grow: 1;"></div>
+        <div id="particular-content" hx-swap-oob="true">
+            <vaadin-tabs>
+                <vaadin-tab>Home</vaadin-tab>
+                <vaadin-tab><a href="/api/user/projects">Projects</a></vaadin-tab>
+                <vaadin-tab><a href="/api/user/profile">Profile</a></vaadin-tab>
+                <vaadin-tab><a href="/api/user/settings">Settings</a></vaadin-tab>
+            </vaadin-tabs>
+        </div>
+        <vaadin-button><vaadin-icon icon="vaadin:sign-out" th:_="'on click call #logout-form.requestSubmit()'"></vaadin-icon></vaadin-button>
+    </vaadin-horizontal-layout>
 </nav>
-<form id="logout-form" method="post" th:action="${logoutPath}" style="display: none;"></form>
+<main id="main-content">
+    <vaadin-markdown></vaadin-markdown>
+    <script>
+        {
+            const markdown = document.querySelector('vaadin-markdown');
+
+            function buildMarkdown() {
+                return `
+
+*Nothing to put here, literally clueless in this regard*
+
+`;
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                markdown.content = buildMarkdown();
+            });
+        }
+    </script>
+</main>
+<form id="logout-form" hidden action="/logout" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+</form>
+<div th:replace="~{layout/footer}"></div>
 </body>
 </html>

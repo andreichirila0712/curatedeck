@@ -1,0 +1,400 @@
+<!--USER-->
+<vaadin-notification th:fragment="user-not-found">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'User could not be found';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                   document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<vaadin-notification th:fragment="password-pattern-mismatch">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Password does not match pattern';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                   document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<vaadin-notification th:fragment="about-too-lengthy">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'About is too lengthy (max 500)';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                   document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<vaadin-notification th:fragment="url-pattern-mismatch">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'URL does not match pattern';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<!--PROJECT-->
+<vaadin-notification th:fragment="project-not-found">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Project not found';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<vaadin-notification id="project-dates-mismatch" th:fragment="project-dates-mismatch" _="on closed put '' into #response" opened>
+    <script>
+        {
+            const notification = document.getElementById('project-dates-mismatch');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Date mismatch. Verify start and/or end date';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', () => {
+                    document.getElementById('project-dates-mismatch').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<!--GENERAL-->
+<vaadin-notification th:fragment="internal-server-error">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Something went wrong';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<vaadin-notification th:fragment="bad-credentials">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Bad credentials';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<vaadin-notification th:fragment="bad-request">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Bad request';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<!--DATABASE-->
+<vaadin-notification th:fragment="data-integrity-violation">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Database operation failed';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
+<!--DEFAULT-->
+<vaadin-notification th:fragment="default">
+    <script>
+        {
+            const notification = document.querySelector('vaadin-notification');
+
+            notification.renderer = function(root, notification) {
+                if (root.firstElementChild) return;
+
+                notification.setAttribute('theme', 'error');
+                notification.setAttribute('duration', '0');
+                notification.setAttribute('position', 'bottom-end');
+                notification.opened = true;
+
+                const layout = document.createElement('vaadin-horizontal-layout');
+                layout.setAttribute('theme', 'spacing');
+                layout.setAttribute('style', 'align-items: center; min-width: 350px;');
+                const message = document.createElement('div');
+                message.textContent = 'Bad request or something went wrong';
+                layout.appendChild(message);
+                const closeButton = document.createElement('vaadin-button');
+                closeButton.setAttribute('slot', 'end');
+                closeButton.setAttribute('theme', 'icon');
+                closeButton.setAttribute('aria-label', 'Close');
+                closeButton.addEventListener('click', ev => {
+                    document.querySelector('vaadin-notification').opened = false;
+                });
+                const icon = document.createElement('vaadin-icon');
+                icon.setAttribute('icon', 'vaadin:close');
+                closeButton.appendChild(icon);
+                layout.appendChild(closeButton);
+
+                root.appendChild(layout);
+            };
+        }
+    </script>
+</vaadin-notification>
