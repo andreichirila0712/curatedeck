@@ -6,6 +6,7 @@ import andrei.chirila.curatedeck.domain.exceptions.ElException;
 import andrei.chirila.curatedeck.infrastructure.dtos.PublicProjectDto;
 import andrei.chirila.curatedeck.infrastructure.dtos.PublicProjectViewDto;
 import andrei.chirila.curatedeck.infrastructure.storage.S3Utility;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@Profile("!integration && !test")
 public class ProjectMapper {
     private final S3Utility s3Utility;
 

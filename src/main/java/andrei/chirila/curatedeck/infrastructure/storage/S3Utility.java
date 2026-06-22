@@ -3,6 +3,7 @@ package andrei.chirila.curatedeck.infrastructure.storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.time.Duration;
 
 @Component
+@Profile("!integration && !test")
 public class S3Utility {
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;

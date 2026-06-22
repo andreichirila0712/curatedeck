@@ -1,6 +1,7 @@
 package andrei.chirila.curatedeck.integration;
 
 import dasniko.testcontainers.keycloak.KeycloakContainer;
+import org.junit.jupiter.api.Tag;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.time.Duration;
 
 @TestConfiguration(proxyBeanMethods = false)
+@Tag("integration")
 public class ContainersConfig {
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine");
 
