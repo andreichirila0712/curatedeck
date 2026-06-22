@@ -1,0 +1,166 @@
+<div th:fragment="add-project">
+    <vaadin-dialog keep-in-viewport id="add-project-dialog">
+        <vaadin-card theme="outlined">
+            <style>
+                vaadin-card {
+                    width: 100%;
+                    box-sizing: border-box;
+                }
+
+                vaadin-card::part(footer) {
+                    display: flex;
+                    justify-content: flex-end;
+                }
+            </style>
+            <div slot="title">Add project</div>
+            <form id="new-project-form"
+                  th:hx-post="${addProject}"
+                  _="on htmx:before:request
+                       add @disabled to #add-project-btn
+                       remove @hidden from #progress
+
+                     on htmx:after:request
+                       remove @disabled from #add-project-btn
+                       add @hidden to #progress
+
+                       if event.detail.ctx.response.status == 201
+                         add @opened to #add-project-success
+                         remove @opened from #add-project-dialog
+                         call me.reset()
+                         put '' into #response
+                       end
+                     on htmx:error
+                       put response into #response"
+                  hx-swap="beforeend"
+            >
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <vaadin-form-layout style="width: 100%">
+                    <vaadin-form-row>
+                        <vaadin-text-field style="width: 100%;"
+                                           label="Role"
+                                           name="role"
+                                           placeholder="Your role"
+                                           helper-text="Backend Engineer, Team Leader, UI/UX Designer, and so on"
+                                           required
+                        ></vaadin-text-field>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-field style="width: 100%;"
+                                           label="Title"
+                                           name="title"
+                                           placeholder="Your project title"
+                                           required
+                        ></vaadin-text-field>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-area style="width: 100%;"
+                                          label="Challenge"
+                                          name="challenge"
+                                          clear-button-visible
+                                          required
+                                          maxlength="144"
+                                          helper-text="type in lower case and append a .(dot) to every sentence"
+                        ></vaadin-text-area>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-area style="width: 100%;"
+                                          label="Solution"
+                                          name="solution"
+                                          clear-button-visible
+                                          required
+                                          maxlength="144"
+                                          helper-text="type in lower case and append a .(dot) to every sentence"
+                        ></vaadin-text-area>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-area style="width: 100%;"
+                                          label="Result"
+                                          name="result"
+                                          clear-button-visible
+                                          required
+                                          maxlength="144"
+                                          helper-text="type in lower case and append a .(dot) to every sentence"
+                        ></vaadin-text-area>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-field label="Technologies"
+                                           name="technologies"
+                                           style="width: 100%;"
+                                           maxlength="156"
+                                           required
+                                           helper-text="e.g. Java, Typescript, Docker. Separate by comma"
+                        ></vaadin-text-field>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-field label="Live URL"
+                                           style="width: 100%;"
+                                           type="url"
+                                           pattern="(?:(?:https?://)?(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z0-9\-]{2,}(?:/\S*)?)?"
+                                           name="live"
+                                           helper-text="If hosted"
+                        ></vaadin-text-field>
+                    </vaadin-form-row>
+                    <vaadin-form-row>
+                        <vaadin-text-field label="Repository"
+                                           style="width: 100%;"
+                                           type="url"
+                                           pattern="(?:(?:https?://)?(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z0-9\-]{2,}(?:/\S*)?)?"
+                                           name="repository"
+                                           helper-text="Link to your repo, if any"
+                        ></vaadin-text-field>
+                    </vaadin-form-row>
+                    <vaadin-form-item>
+                        <label slot="label">Start date</label>
+                        <vcf-month-picker placeholder="Select start date"
+                                          clear-button-visible
+                                          name="startDate">
+                        </vcf-month-picker>
+                    </vaadin-form-item>
+                    <vaadin-form-item>
+                        <label slot="label">End date</label>
+                        <vcf-month-picker placeholder="Select end date"
+                                          clear-button-visible
+                                          name="endDate"
+                        ></vcf-month-picker>
+                    </vaadin-form-item>
+                </vaadin-form-layout>
+            </form>
+            <vaadin-horizontal-layout theme="spacing">
+                <vaadin-button theme="primary" id="add-project-btn" slot="end"
+                               th:_="'on click call #new-project-form.requestSubmit()'">Add project
+                </vaadin-button>
+                <vaadin-button theme="tertiary"
+                               th:_="'on click clear #new-project-form then remove @opened from #add-project-dialog'">
+                    Close
+                </vaadin-button>
+            </vaadin-horizontal-layout>
+            <vaadin-progress-bar indeterminate hidden id="progress"></vaadin-progress-bar>
+            <script th:inline="javascript">
+                {
+                    const newProjectForm = document.getElementById('new-project-form');
+                    newProjectForm.addEventListener('htmx:config:request', (e) => {
+                        e.detail.ctx.request.headers['X-CSRF-TOKEN'] = /*[[${_csrf.token}]]*/'';
+                    });
+                }
+
+                {
+                    document.querySelectorAll('vcf-month-picker[name]').forEach(picker => {
+                        const name = picker.getAttribute('name');
+
+                        const hidden = document.createElement('input');
+                        hidden.setAttribute('type', 'hidden');
+                        hidden.setAttribute('name', name);
+                        picker.after(hidden);
+
+                        const sync = () => {
+                            hidden.value = picker.value ?? '';
+                        };
+
+                        picker.addEventListener('value-changed', sync);
+                        picker.addEventListener('change', sync);
+                    });
+                }
+            </script>
+        </vaadin-card>
+    </vaadin-dialog>
+</div>
