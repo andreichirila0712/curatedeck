@@ -56,8 +56,8 @@
 
                        if event.detail.ctx.response.status == 200
                          add @opened to #update-project-success
-                         call me.reset()
                          put '' into #response
+                         call location.reload()
                        end"
               hx-target-400="#response"
               hx-swap="beforeend"
