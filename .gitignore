@@ -30,6 +30,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+application-dev.yml
+application-prod.yml
 ### VS Code ###
 .vscode/
 
