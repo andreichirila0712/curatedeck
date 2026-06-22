@@ -71,6 +71,7 @@ public class SiteController {
         model.addAttribute("projects", "/api/project/all-public");
         model.addAttribute("name", principal != null ? principal.getAttribute("given_name") : "");
         model.addAttribute("authenticated", principal != null);
+        model.addAttribute("avatar", userService.getUrlToAvatar(principal.getSubject()));
 
         return "site/public-projects";
     }
