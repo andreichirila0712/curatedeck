@@ -43,6 +43,7 @@ jobs:
           username: ${{ secrets.SERVER_USER}}
           key: ${{ secrets.SERVER_SSH_KEY}}
           script: |
+            rm -f /tmp/app.jar
             rm -f /tmp/*-plain.jar
             mv /tmp/*.jar /tmp/app.jar
             bash /opt/springapp/deploy.sh
