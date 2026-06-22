@@ -23,7 +23,7 @@ public class S3Config {
     private String secretKey;
 
     @Bean(destroyMethod = "close")
-    @Profile("!integration")
+    @Profile("!integration && !test")
     public S3Client s3Client() {
         return S3Client.builder()
                 .endpointOverride(URI.create(garageEndpoint))
@@ -38,7 +38,7 @@ public class S3Config {
     }
 
     @Bean(destroyMethod = "close")
-    @Profile("!integration")
+    @Profile("!integration && !test")
     public S3Presigner presigner() {
         return S3Presigner.builder()
                 .endpointOverride(URI.create(garageEndpoint))

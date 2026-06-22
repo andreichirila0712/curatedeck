@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
+@Profile("!integration && !test")
 public class KeycloakConfig {
     @Value("${keycloak.realm}")
     private String realm;
@@ -20,7 +21,6 @@ public class KeycloakConfig {
     private String serverUrl;
 
     @Bean
-    @Profile("!integration")
     public Keycloak keycloak() {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
