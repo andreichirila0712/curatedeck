@@ -77,11 +77,7 @@
 ### Challenges
 
 `;
-
-            const challengeString = publicProject.challenge;
-            let len = challengeString.split('.').length;
-
-            const challenges = challengeString.split('.', len - 1);
+            const challenges = project.challenge.split('.').map(s => s.trim()).filter(s => s.length > 0);
             challenges.forEach(challenge => {
                 md += `- ${challenge}\n`;
             });
@@ -90,10 +86,7 @@
 ### Solutions
 
 `;
-            const solutionString = publicProject.solution;
-            len = solutionString.split('.').length;
-
-            const solutions = solutionString.split('.', len - 1);
+            const solutions = project.solution.split('.').map(s => s.trim()).filter(s => s.length > 0);
             solutions.forEach(solution => {
                 md += `- ${solution}\n`;
             });
@@ -102,10 +95,7 @@
 ### Results
 
 `;
-            const resultString = publicProject.result;
-            len = resultString.split('.').length;
-
-            const results = resultString.split('.', len - 1);
+            const results = project.result.split('.').map(s => s.trim()).filter(s => s.length > 0);
             results.forEach(result => {
                 md += `- ${result}`;
             });
