@@ -165,8 +165,11 @@ public  class Project implements ProjectView {
 
     @Embeddable
     public static class ProjectDescription {
+        @Column(columnDefinition = "TEXT")
         private String challenge;
+        @Column(columnDefinition = "TEXT")
         private String solution;
+        @Column(columnDefinition = "TEXT")
         private String result;
 
         public ProjectDescription() {}
@@ -198,8 +201,11 @@ public  class Project implements ProjectView {
 
     @Embeddable
     public static class ProjectImage {
+        @Column(columnDefinition = "TEXT")
         private String thumbnail;
+        @Column(columnDefinition = "TEXT")
         private String diagram;
+        @Column(columnDefinition = "TEXT")
         private String demo;
 
         public ProjectImage() {}
