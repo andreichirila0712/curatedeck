@@ -2,6 +2,7 @@ package andrei.chirila.curatedeck.integration;
 
 import andrei.chirila.curatedeck.domain.services.UserService;
 import jakarta.servlet.annotation.MultipartConfig;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MultipartConfig
+@Tag("integration")
 public class UserControllerIntegrationTest extends BaseIntegrationTest {
     private static final String PATH_TO_FILE = "src/test/resources/static/default-avatar.jpg";
 

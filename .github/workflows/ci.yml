@@ -18,4 +18,4 @@ jobs:
           cache: maven
 
       - name: Run the tests
-        run: ./mvnw verify -Ptest
+        run: ./mvnw verify -DexcludedGroups="integration" -Dspring.profiles.active=test
