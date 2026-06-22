@@ -1,0 +1,46 @@
+spring:
+  jpa:
+    show-sql: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL_DEV}
+    username: ${SPRING_DATASOURCE_USERNAME_DEV}
+    password: ${SPRING_DATASOURCE_PASSWORD_DEV}
+  flyway:
+    enabled: true
+    locations:
+      - classpath:/db/{vendor}/common
+      - classpath:/db/{vendor}/dev
+  docker:
+    compose:
+      enabled: false
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_ISSUER_URI}
+        registration:
+          keycloak:
+            provider: ${KEYCLOAK_PROVIDER}
+            authorization-grant-type: ${KEYCLOAK_AUTHORIZATION_GRANT_TYPE}
+            client-id: ${KEYCLOAK_CLIENT_ID}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}
+            scope:
+              - ${KEYCLOAK_SCOPE}
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+garage:
+  bucket: ${GARAGE_BUCKET}
+  endpoint: ${GARAGE_ENDPOINT}
+  key: ${GARAGE_ACCESS_KEY}
+  secret: ${GARAGE_SECRET_KEY}
+keycloak:
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  url: ${KEYCLOAK_URL}
+header:
+  secret: ${HEADER_SECRET}
