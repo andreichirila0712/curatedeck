@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:theme="${theme}">
+<div th:replace="~{layout/header}"></div>
+<body>
+<style>
+    #markdown-content h1 {
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #markdown-content h5 {
+        text-align: center;
+        margin-top: 0;
+    }
+</style>
+<nav>
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <vaadin-avatar th:img="${avatar}"></vaadin-avatar>
+        <b th:text="'Welcome, ' + ${name}"></b>
+        <div style="flex-grow: 1;"></div>
+        <div id="particular-content" hx-swap-oob="true">
+            <vaadin-tabs>
+                <vaadin-tab th:text="${project.title}"></vaadin-tab>
+                <vaadin-tab><a href="/api/user/projects">Projects</a></vaadin-tab>
+            </vaadin-tabs>
+        </div>
+    </vaadin-horizontal-layout>
+</nav>
+<main id="main-content" th:fragment="project-content">
+    <vaadin-markdown id="markdown-content"></vaadin-markdown>
+    <script th:inline="javascript">
+        const markdown = document.querySelector('vaadin-markdown');
+        const project = /*[[${project}]]*/'';
+
+        function buildMarkdown() {
+            let md = `
+
+# ${project.title}
+
+##### *${project.role}*
+
+`;
+
+            if (project.demo != null) {
+                md += `
+### Demo
+
+<img src="${project.demo}" width="400" height="200">
+
+`;
+            }
+
+            md += `
+### Challenges
+
+`;
+
+            const challengeString = project.challenge;
+            let len = challengeString.split('.').length;
+
+            const challenges = challengeString.split('.', len - 1);
+            challenges.forEach(challenge => {
+                md += `- ${challenge}\n`;
+            });
+
+            md += `
+### Solutions
+
+`;
+            const solutionString = project.solution;
+            len = solutionString.split('.').length;
+
+            const solutions = solutionString.split('.', len - 1);
+            solutions.forEach(solution => {
+                md += `- ${solution}\n`;
+            });
+
+            md += `
+### Results
+
+`;
+            const resultString = project.result;
+            len = resultString.split('.').length;
+
+            const results = resultString.split('.', len - 1);
+            results.forEach(result => {
+                md += `- ${result}`;
+            });
+
+            if (project.diagram != null) {
+                md += `
+### Architectural diagram
+
+<img src="${project.diagram}" height="200" width="400">
+`;
+            }
+
+            let technologies = project.technologies.split(',');
+
+            const coloredTechnologies = technologies.map(technology => {
+                const hue = Math.floor(Math.random() * 360);
+                const color = `hsl(${hue}, 85%, 50%)`;
+
+                return `<span style="color: ${color}; font-weight: bold;">${technology}</span>`;
+            });
+
+            technologies = coloredTechnologies.join(', ');
+
+            md += `
+### Technologies
+
+*${technologies}*
+`;
+            return md;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            markdown.content = buildMarkdown();
+            document.getElementById('title-content').textContent = project.title;
+        });
+
+    </script>
+</main>
+</body>
+</html>

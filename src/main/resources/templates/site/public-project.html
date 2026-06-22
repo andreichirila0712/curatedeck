@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script>
+        const saved = localStorage.getItem('theme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('theme', saved || preferred);
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
+    <script th:src="@{/vendor/htmx.min.js}"></script>
+    <script th:src="@{/vendor/_hyperscript.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/vaadin/style.css}">
+    <script type="module" th:src="@{/vaadin/vaadin-bundle.js}"></script>
+    <title th:text="${project.title()}"></title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex-grow: 1;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+            box-sizing: border-box;
+            align-items: flex-start;
+            align-content: flex-start;
+        }
+
+        #project-content h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        #project-content h5 {
+            text-align: center;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<nav>
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <a href="/api/public/projects">Back to projects</a>
+        <div style="flex-grow: 1;"></div>
+    </vaadin-horizontal-layout>
+</nav>
+<main id="main-content" th:fragment="public-project-content">
+    <vaadin-markdown id="project-content"></vaadin-markdown>
+    <script th:inline="javascript">
+        const publicProject = /*[[${project}]]*/'';
+
+        function buildMarkdown() {
+            let md = `
+# ${publicProject.title}
+
+##### *${publicProject.role}*
+
+`;
+
+            if (publicProject.demo != null) {
+                md += `
+### Demo
+
+<img src="${publicProject.demo}" width="400" height="200">
+
+`;
+            }
+
+            md += `
+### Challenges
+
+`;
+
+            const challengeString = publicProject.challenge;
+            let len = challengeString.split('.').length;
+
+            const challenges = challengeString.split('.', len - 1);
+            challenges.forEach(challenge => {
+                md += `- ${challenge}\n`;
+            });
+
+            md += `
+### Solutions
+
+`;
+            const solutionString = publicProject.solution;
+            len = solutionString.split('.').length;
+
+            const solutions = solutionString.split('.', len - 1);
+            solutions.forEach(solution => {
+                md += `- ${solution}\n`;
+            });
+
+            md += `
+### Results
+
+`;
+            const resultString = publicProject.result;
+            len = resultString.split('.').length;
+
+            const results = resultString.split('.', len - 1);
+            results.forEach(result => {
+                md += `- ${result}`;
+            });
+
+
+            if (publicProject.diagram != null) {
+                md += `
+### Architectural diagram
+
+<img src="${publicProject.diagram}" height="200" width="400">
+`;
+            }
+
+            md += `
+### Technologies
+
+`;
+            let technologies = publicProject.technologies.split(',');
+
+            const coloredTechnologies = technologies.map(technology => {
+                const hue = Math.floor(Math.random() * 360);
+                const color = `hsl(${hue}, 85%, 50%)`;
+
+                return `<span style="color: ${color}; font-weight: bold;">${technology}</span>`;
+            });
+
+            technologies = coloredTechnologies.join(', ');
+            md += `
+
+${technologies}
+`;
+            return md;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('project-content').content = buildMarkdown();
+        });
+    </script>
+</main>
+<div th:replace="~{layout/footer}"></div>
+</body>
+</html>

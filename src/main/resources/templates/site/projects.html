@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:theme="${theme}">
+<div th:replace="~{layout/header}"></div>
+<body>
+<nav>
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <vaadin-avatar th:img="${avatar}"></vaadin-avatar>
+        <b th:text="'Welcome, ' + ${name}"></b>
+        <div style="flex-grow: 1;"></div>
+        <div id="particular-content" hx-swap-oob="true" style="display: flex; align-items: center; justify-content: space-between;">
+            <vaadin-button theme="tertiary" _="on click add @opened to #add-project-dialog">
+                <vaadin-icon slot="prefix" icon="vaadin:plus-circle"></vaadin-icon>Add project
+            </vaadin-button>
+            <vaadin-tabs>
+                <vaadin-tab>Projects</vaadin-tab>
+                <vaadin-tab><a href="/api/public/projects">Public projects</a></vaadin-tab>
+                <vaadin-tab><a href="/api/home">Home</a></vaadin-tab>
+            </vaadin-tabs>
+        </div>
+
+    </vaadin-horizontal-layout>
+</nav>
+<main id="main-content" th:fragment="projects-content">
+    <div id="projects-container" class="projects-container"
+         style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%;"></div>
+
+    <div th:hx-get="${projects}" hx-trigger="load" hx-target="#projects-container" id="projects-loading" hidden></div>
+
+    <div th:replace="~{fragments/add-project}"></div>
+
+    <div th:replace="~{fragments/success-project}"></div>
+
+    <div id="response"></div>
+
+    <script>
+       document.getElementById('title-content').textContent = 'Projects';
+    </script>
+</main>
+</body>
+</html>

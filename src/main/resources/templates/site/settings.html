@@ -1,193 +1,120 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
-    <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
-    <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
-    <script th:src="@{/vendor/htmx-ext-response-targets.js}"></script>
-    <link th:rel="stylesheet" th:href="@{/css/prove.css}">
-    <title>Settings</title>
-</head>
-<body class="body-full-view" hx-ext="response-targets">
-<div th:replace="~{layout/header :: header-nav}"></div>
-<main class="container main-style">
-    <article>
-        <header>Settings</header>
-        <details>
-            <summary>
-                General
-            </summary>
-            <article>
-                <form>
-                    <fieldset>
-                        <legend>Language preference:</legend>
-                        <label>
-                            <input type="radio"
-                                   value="english"
-                                   name="language"
-                                   th:checked="${languagePreference == 'english'}"
-                                   th:hx-patch="${updateLanguagePath}"
-                                   hx-trigger="change"
-                            />
-                            English
-                        </label>
-                        <label>
-                            <input type="radio"
-                                   value="romanian"
-                                   name="language"
-                                   th:checked="${languagePreference == 'romanian'}"
-                                   th:hx-patch="${updateLanguagePath}"
-                                   hx-trigger="change"
-                            />
-                            Romanian
-                        </label>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:theme="${theme}">
+<div th:replace="~{layout/header}"></div>
+<body>
+<nav>
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <vaadin-avatar th:img="${avatar}"></vaadin-avatar>
+        <b th:text="'Welcome, ' + ${name}"></b>
+        <div style="flex-grow: 1;"></div>
+        <div id="particular-content" hx-swap-oob="true">
+            <vaadin-tabs>
+                <vaadin-tab>Settings</vaadin-tab>
+                <vaadin-tab><a href="/api/home">Home</a></vaadin-tab>
+            </vaadin-tabs>
+        </div>
+    </vaadin-horizontal-layout>
+</nav>
+<main id="main-content" th:fragment="settings-content">
+    <vaadin-card theme="outlined">
+        <div slot="title">Settings</div>
+        <vaadin-details summary="General" opened>
+            <vaadin-form-layout>
+                <vaadin-radio-group label="Language preference" theme="horizontal">
+                    <vaadin-radio-button
+                            hx-vals='{"language": "english"}'
+                            name="language"
+                            th:checked="${language == 'english'}"
+                            hx:patch="${updateLanguage}"
+                            hx-trigger="change"
+                            label="English"
+                    ></vaadin-radio-button>
+                    <vaadin-radio-button
+                            hx-vals='{"language": "romanian"}'
+                            name="language"
+                            th:checked="${language == 'romanian'}"
+                            hx:patch="${updateLanguage}"
+                            hx-trigger="change"
+                            label="Romanian"
+                    ></vaadin-radio-button>
+                </vaadin-radio-group>
+                <vaadin-radio-group label="Theme toggle" theme="horizontal">
+                    <vaadin-radio-button
+                            hx-vals='{"theme": "light"}'
+                            name="theme"
+                            th:checked="${theme == 'light'}"
+                            hx:patch="${updateTheme}"
+                            hx-trigger="change"
+                            label="Light"
+                            _="on htmx:after:request
+                                document.documentElement.setAttribute('theme', 'light')"
+                    ></vaadin-radio-button>
+                    <vaadin-radio-button
+                            hx-vals='{"theme": "dark"}'
+                            name="theme"
+                            th:checked="${theme == 'dark'}"
+                            hx:patch="${updateTheme}"
+                            hx-trigger="change"
+                            label="Dark"
+                            _="on htmx:after:request
+                                document.documentElement.setAttribute('theme', 'dark')"
+                    ></vaadin-radio-button>
+                </vaadin-radio-group>
+                <vaadin-radio-group label="Date format preference" theme="horizontal">
+                    <vaadin-radio-button
+                            hx-vals='{"dateFormat": "MM/DD/YYYY"}'
+                            name="dateFormat"
+                            th:checked="${dateFormat == 'MM/DD/YYYY'}"
+                            hx:patch="${updateDateFormat}"
+                            hx-trigger="change"
+                            label="MM/DD/YYYY"
+                    ></vaadin-radio-button>
+                    <vaadin-radio-button
+                            hx-vals='{"dateFormat": "DD/MM/YYYY"}'
+                            name="dateFormat"
+                            th:checked="${dateFormat == 'DD/MM/YYYY'}"
+                            hx:patch="${updateDateFormat}"
+                            hx-trigger="change"
+                            label="DD/MM/YYYY"
+                    ></vaadin-radio-button>
+                </vaadin-radio-group>
+            </vaadin-form-layout>
+        </vaadin-details>
+        <vaadin-details summary="Account & Security" opened>
+            <vaadin-vertical-layout>
+                <vaadin-button theme="secondary" hx:put="${changeEmail}" hx-swap="innerHTML"
+                               hx-target="#dialog-container">Change email
+                </vaadin-button>
+                <vaadin-button theme="secondary" hx:put="${changePassword}" hx-swap="innerHTML"
+                               hx-target="#dialog-container">Change password
+                </vaadin-button>
+                <vaadin-button theme="error" th:_="'on click add @opened to #confirm-delete-dialog'">Delete account
+                </vaadin-button>
+            </vaadin-vertical-layout>
+        </vaadin-details>
+    </vaadin-card>
 
-                        <legend>Theme toggle:</legend>
-                        <label>
-                            <input type="radio"
-                                   value="light"
-                                   name="theme"
-                                   th:checked="${themePreference == 'light'}"
-                                   th:hx-patch="${updateThemePath}"
-                                   hx-trigger="change"
-                            />
-                            Light
-                        </label>
-                        <label>
-                            <input type="radio"
-                                   value="dark"
-                                   name="theme"
-                                   th:checked="${themePreference == 'dark'}"
-                                   th:hx-patch="${updateThemePath}"
-                                   hx-trigger="change"
-                            />
-                            Dark
-                        </label>
-                        <legend>Date format preference:</legend>
-                        <label>
-                            <input type="radio"
-                                   value="MM/DD/YYYY"
-                                   name="dateFormat"
-                                   th:checked="${dateFormatPreference == 'MM/DD/YYYY'}"
-                                   th:hx-patch="${updateDateFormatPath}"
-                                   hx-trigger="change"
-                            />
-                            MM/DD/YYYY
-                        </label>
-                        <label>
-                            <input type="radio"
-                                   value="DD/MM/YYYY"
-                                   name="dateFormat"
-                                   th:checked="${dateFormatPreference == 'DD/MM/YYYY'}"
-                                   th:hx-patch="${updateDateFormatPath}"
-                                   hx-trigger="change"
-                            />
-                            DD/MM/YYYY
-                        </label>
-                    </fieldset>
-                </form>
-            </article>
-        </details>
+    <div id="dialog-container"></div>
 
-        <details>
-            <summary>
-                Privacy
-            </summary>
-            <article>
-                <form>
-                    <fieldset>
-                        <legend>Profile visibility:</legend>
-                        <label>
-                            <input type="radio"
-                                   value="private"
-                                   name="visibility"
-                                   th:checked="${profileVisibilityPreference} == 'private'"
-                                   th:hx-patch="${updateVisibilityPath}"
-                                   hx-trigger="change"
-                            />
-                            Private
-                        </label>
-                        <label>
-                            <input type="radio"
-                                   value="public"
-                                   name="visibility"
-                                   th:checked="${profileVisibilityPreference} == 'public'"
-                                   th:hx-patch="${updateVisibilityPath}"
-                                   hx-trigger="change"
-                            />
-                            Public
-                        </label>
-                        <legend>Discoverable</legend>
-                        <label>
-                            <input type="radio"
-                                   value="yes"
-                                   name="discoverable"
-                                   th:checked="${profileDiscoverablePreference} == 'yes'"
-                                   th:hx-patch="${updateDiscoverabilityPath}"
-                                   hx-trigger="change"
-                                   disabled
-                            />
-                            Yes
-                        </label>
-                        <label>
-                            <input type="radio"
-                                   value="no"
-                                   name="discoverable"
-                                   th:checked="${profileDiscoverablePreference} == 'no'"
-                                   th:hx-patch="${updateDiscoverabilityPath}"
-                                   hx-trigger="change"
-                                   disabled
-                            />
-                            No
-                        </label>
-                    </fieldset>
-                </form>
-                <button class="pico-background-red-500"
-                       th:_="'on click add @open to #account-deletion-modal'">
-                    Delete account
-                </button>
-            </article>
-        </details>
+    <vaadin-confirm-dialog id="confirm-delete-dialog"
+                           cancel-button-visible
+                           confirm-text="Confirm"
+                           header="Confirm account deletion">
+        Are you sure you want to delete your account? Shortly after confirming you will receive an email to proceed with deletion of the account. You will be logged out.
+    </vaadin-confirm-dialog>
 
-        <details>
-            <summary>
-                Account & Security
-            </summary>
-            <article>
-                <button class="pico-background-grey-500"
-                        th:_="'on click add @open to #password-change-modal'">
-                    Change password
-                </button>
-                <form th:hx-patch="${changeEmailPath}"
-                      hx-target="#success"
-                      hx-target-404="#error" hx-target-409="#error" hx-target-410="#error"
-                      hx-swap="innerHTML"
-                      _="on htmx:beforeRequest add @aria-busy='true' to #submit-email-btn
-                         on htmx:afterRequest remove @aria-busy='true' from #submit-email-btn"
-                >
-                    <fieldset>
-                        <label>
-                            Change email
-                            <input type="email"
-                                   th:placeholder="${currentEmail}"
-                                   name="newEmail"
-                                   id="newEmail"
-                            />
-                            <button id="submit-email-btn" type="submit" class="pico-background-azure-500">
-                                Apply change
-                            </button>
-                        </label>
-                    </fieldset>
-                </form>
-            </article>
-        </details>
-    </article>
-    <div id="success"></div>
-    <div id="error"></div>
+    <form hidden id="confirm-deletion-form" th:hx-post="${deleteAccount}" hx-swap="beforeend" hx-target="body"></form>
+    <script>
+        {
+            const dialog = document.querySelector('vaadin-confirm-dialog');
+            dialog.addEventListener('confirm', () => {
+                htmx.trigger('#confirm-deletion-form', 'submit');
+            });
+        }
+
+        document.getElementById('title-content').textContent = 'Settings';
+
+    </script>
 </main>
-<div th:replace="~{fragments/modals :: password-change-modal}"></div>
-<div th:replace="~{fragments/modals :: account-deletion-modal}"></div>
-<div th:replace="~{layout/footer :: footer}"></div>
 </body>
 </html>

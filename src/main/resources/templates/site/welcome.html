@@ -1,30 +1,50 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script>
+        const saved = localStorage.getItem('theme');
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', saved || preferred);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
-    <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
-    <script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
-    <link th:rel="stylesheet" th:href="@{/css/prove.css}">
+    <script th:src="@{/vendor/htmx.min.js}"></script>
+    <script th:src="@{/vendor/_hyperscript.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/pico.conditional.css}">
+    <link rel="stylesheet" th:href="@{/css/pico.colors.css}">
+    <link rel="stylesheet" th:href="@{/vaadin/style.css}">
+    <script type="module" th:src="@{/vaadin/vaadin-bundle.js}"></script>
     <title>Welcome</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex-grow: 1;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+    </style>
 </head>
-<body class="body-full-view">
-<header class="container">
-    <nav>
-        <ul>
-            <li>
-                <ins><b>Exhibition Land</b></ins>
-            </li>
-        </ul>
-        <ul>
-            <li><a th:hx-get="${loginForm}" hx-target="#login-frag" class="outline secondary" role="button">Login</a>
-            </li>
-            <li><a th:hx-get="${signUp}" hx-target="#registration-modal" class="pico-background-zinc-100" role="button">Sign
-                Up</a></li>
-        </ul>
-    </nav>
-</header>
-<main class="container main-style">
+<body>
+<nav>
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <ins><b>CurateDeck</b></ins>
+        <div style="flex-grow: 1;"></div>
+        <a href="/api/public/projects">Public projects</a>
+        <vaadin-button theme="primary" th:_="'on click go to' + ${login}">Login/Sign up</vaadin-button>
+        <vaadin-icon id="theme-icon"></vaadin-icon>
+        <vaadin-checkbox id="theme-toggler"></vaadin-checkbox>
+    </vaadin-horizontal-layout>
+</nav>
+<main class="pico">
     <section>
         <hgroup>
             <h1>If it
@@ -33,28 +53,43 @@
             <p>Why not just show what you've done?</p>
         </hgroup>
     </section>
-
     <section>
         <h2>But if it <s class="pico-color-pumpkin-300"><b class="pico-color-pumpkin-300">doesn't</b></s>, then it is a
             <b class="pico-color-jade-500">feature</b>, never a <b class="pico-color-red-500">bu<sup>g</sup></b></h2>
     </section>
 </main>
-<footer class="container">
-    <nav style="justify-content: center;">
-        <ul>
-            <li>©</li>
-            <li>Exhibition Land</li>
-            <li>·</li>
-            <li><a th:href="${privacyPolicy}">Privacy Policy</a></li>
-            <li>·</li>
-            <li><a th:href="${termsOfService}">Terms of Service</a></li>
-        </ul>
-    </nav>
-</footer>
-<div id="login-frag"></div>
-<div id="registration-modal"></div>
-<div class="overlay" id="overlay-content"></div>
-<div id="registration-success"></div>
-<div id="account-is-active"></div>
+<div th:replace="~{layout/footer}"></div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkbox = document.getElementById('theme-toggler');
+        const icon = document.getElementById('theme-icon');
+
+        if (!checkbox) return;
+
+        function updateIcon() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const isDark = currentTheme === 'dark';
+            icon.setAttribute('icon', isDark ? 'vaadin:sun-o' : 'vaadin:moon-o');
+        }
+
+        function initThemeToggler() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            checkbox.checked = currentTheme === 'dark';
+            updateIcon();
+        }
+
+        initThemeToggler()
+
+        checkbox.addEventListener('change', () => {
+            const isChecked = checkbox.checked;
+
+            const newTheme = isChecked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            updateIcon();
+        });
+    });
+</script>
 </body>
 </html>

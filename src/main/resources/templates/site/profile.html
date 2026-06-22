@@ -1,182 +1,62 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=1.0">
-    <script th:src="@{/vendor/htmx.min.js}"></script>
-    <script th:src="@{/vendor/_hyperscript.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/vaadin/style.css}">
-    <script type="module" th:src="@{/vaadin/vaadin-bundle.js}"></script>
-    <title>Profile</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:theme="${theme}">
+<div th:replace="~{layout/header}"></div>
 <body>
-<vaadin-app-layout>
-    <div slot="navbar">
-        <vaadin-horizontal-layout theme="spacing padding" style="align-items: center;">
-            <vaadin-icon icon="vaadin:home"></vaadin-icon>
-            <a th:href="${homePath}">Home</a>
-            <div id="avatar-img" slot="end">
-                <vaadin-avatar  th:img="${avatarUrl}" th:name="${name}"></vaadin-avatar>
-            </div>
-            <h4 th:text="${name}" slot="end">Name</h4>
-        </vaadin-horizontal-layout>
-    </div>
-    <div style="display: flex; justify-content: center; align-items: center; min-height: 100%; padding: var(--lumo-space-m)">
-        <vaadin-card style="width: 400px; align-items: center;" theme="outlined">
-            <div slot="title">Profile</div>
-            <form id="profile-form"
-                  th:hx-patch="${updateProfilePath}"
-                  _="on htmx:beforeRequest add @disabled to #save-changes-btn then remove @hidden from #progress
-                  on htmx:afterRequest remove @disabled from #save-changes-btn then add @hidden to  #progress
-                  on htmx:afterRequest[detail.successful] set #profile-update-success.opened to 'true'
-                  on htmx:responseError set #profile-update-error.opened to 'true'"
-                  hx-swap="none"
-            >
-                <vaadin-form-layout style="width: 100%;">
-                    <vaadin-form-row>
-                        <vaadin-text-field style="width: 100%;" label="Name"
-                                           name="name"
-                                           th:value="${name}"
-                        ></vaadin-text-field>
-                    </vaadin-form-row>
-                    <vaadin-form-row>
-                        <vaadin-text-field style="width: 100%;" label="Username"
-                                           name="username"
-                                           th:value="${username}"
-                        ></vaadin-text-field>
-                    </vaadin-form-row>
-                    <vaadin-form-row>
-                        <vaadin-text-area label="About"
-                                          clear-button-visible
-                                          style="width: 100%;"
-                                          name="about"
-                                          th:value="${about}"
-                        ></vaadin-text-area>
-                    </vaadin-form-row>
-                    <vaadin-form-row>
-                        <vaadin-text-field label="Location"
-                                           style="width: 100%;"
-                                           name="location"
-                                           th:value="${location}"
-                        ></vaadin-text-field>
-                    </vaadin-form-row>
-                    <vaadin-form-row>
-                        <vaadin-text-field label="Website"
-                                           style="width: 100%;"
-                                           type="url"
-                                           pattern="(?:(?:https?://)?(?:[a-zA-Z0-9\-]+\.)+[a-zA-Z0-9\-]{2,}(?:/\S*)?)?"
-                                           name="website"
-                                           th:value="${website}"
-                        ></vaadin-text-field>
-                    </vaadin-form-row>
-                </vaadin-form-layout>
-            </form>
-            <label for="upload-avatar"
-                   style="
-                       color: var(--lumo-secondary-text-color);
-                       font-weight: 500;
-                       font-size: var(--lumo-font-size-s);
-                       font-family: var(--lumo-font-family);
-                       line-height: 1;
-                       padding-inline: calc(var(--lumo-border-radius-m) / 4) 1em;
-                       padding-bottom: 0.5em;
-                       overflow: hidden;
-                       white-space: nowrap;
-                       text-overflow: ellipsis;
-                       box-sizing: border-box;"
-            >Avatar</label>
-            <vaadin-vertical-layout>
-                <vaadin-upload
-                        id="upload-avatar"
-                        th:target="${avatarUploadPath}"
-                        upload-format="multipart"
-                        accept="image/png, image/jpeg"
-                        max-files="1"
-                        style="width: 100%;"
-                        _="on 'upload-success' from #upload-avatar htmx.trigger('#avatar-refresh', 'uploaded')"
-                ></vaadin-upload>
-            </vaadin-vertical-layout>
-            <vaadin-horizontal-layout theme="spacing">
-                <vaadin-button theme="primary" id="save-changes-btn" th:_="'on click call #profile-form.requestSubmit()'">Save changes</vaadin-button>
-                <vaadin-button theme="tertiary" _="on click reset #profile-form">Clear changes</vaadin-button>
-            </vaadin-horizontal-layout>
-            <vaadin-progress-bar indeterminate hidden id="progress"></vaadin-progress-bar>
-        </vaadin-card>
-        <div id="error"></div>
-        <div id="avatar-refresh" hidden
-             th:hx-get="${avatarRefreshPath}"
-             hx-target="#avatar-img"
-             hx-trigger="uploaded"
-        ></div>
-    </div>
-</vaadin-app-layout>
-<vaadin-notification position="bottom-end"
-                     theme="success"
-                     id="profile-update-success">
-</vaadin-notification>
-<vaadin-notification position="bottom-end"
-                     theme="error"
-                     id="profile-update-error"
-                     duration="0"
-></vaadin-notification>
+<nav>
+    <vaadin-horizontal-layout theme="spacing padding" style="align-items: center; width: 100%; box-sizing: border-box;">
+        <vaadin-avatar th:img="${avatar}"></vaadin-avatar>
+        <b th:text="'Welcome, ' + ${name}"></b>
+        <div style="flex-grow: 1;"></div>
+        <div id="particular-content" hx-swap-oob="true">
+            <vaadin-tabs>
+                <vaadin-tab>Profile</vaadin-tab>
+                <vaadin-tab><a href="/api/home">Home</a></vaadin-tab>
+            </vaadin-tabs>
+        </div>
+    </vaadin-horizontal-layout>
+</nav>
+<main id="main-content" th:fragment="profile-content">
+    <vaadin-card theme="outlined">
+        <div slot="title">Profile</div>
+<!--        <label for="upload-avatar"-->
+<!--               style="-->
+<!--                       color: var(&#45;&#45;lumo-secondary-text-color);-->
+<!--                       font-weight: 500;-->
+<!--                       font-size: var(&#45;&#45;lumo-font-size-s);-->
+<!--                       font-family: var(&#45;&#45;lumo-font-family);-->
+<!--                       line-height: 1;-->
+<!--                       padding-inline: calc(var(&#45;&#45;lumo-border-radius-m) / 4) 1em;-->
+<!--                       padding-bottom: 0.5em;-->
+<!--                       overflow: hidden;-->
+<!--                       white-space: nowrap;-->
+<!--                       text-overflow: ellipsis;-->
+<!--                       box-sizing: border-box;"-->
+<!--        >Avatar</label>-->
+        <vaadin-vertical-layout>
+            <vaadin-upload
+                    label="Upload avatar"
+                    id="upload-avatar"
+                    th:target="${avatarUpload}"
+                    upload-format="multipart"
+                    accept="image/png, image/jpeg"
+                    max-files="1"
+                    style="width: 100%;"
+            ></vaadin-upload>
+        </vaadin-vertical-layout>
+    </vaadin-card>
+    <script th:inline="javascript">
+        document.getElementById('title-content').textContent = 'Profile';
+
+        {
+            const upload = document.getElementById('upload-avatar');
+            upload.addEventListener('upload-request', (e) => {
+                e.detail.xhr.setRequestHeader(
+                    '[[${_csrf.headerName}]]',
+                    '[[${_csrf.token}]]'
+                );
+            });
+        }
+    </script>
+</main>
 </body>
-<script>
-    const successNotification = document.querySelector('#profile-update-success');
-
-    successNotification.renderer = function (root) {
-
-        if (root.firstElementChild) return;
-
-        const layout = document.createElement('vaadin-horizontal-layout');
-        layout.setAttribute('theme', 'spacing');
-        layout.style.cssText = 'align-items: center; min-width: 350px;'
-
-        const icon = document.createElement('vaadin-icon');
-        icon.setAttribute('icon', 'vaadin:check-circle');
-
-        const text = document.createElement('div');
-        text.textContent = 'Profile updated!';
-
-        layout.appendChild(icon);
-        layout.appendChild(text);
-        root.appendChild(layout);
-    };
-
-    const errorNotification = document.querySelector('#profile-update-error');
-
-    errorNotification.renderer = function (err) {
-        if (err.firstElementChild) return;
-
-        const layout = document.createElement('vaadin-horizontal-layout');
-        layout.setAttribute('theme', 'spacing');
-        layout.style.cssText = 'align-items: center; min-width: 350px;';
-
-        const icon = document.createElement('vaadin-icon');
-        icon.setAttribute('icon', 'vaadin:warning');
-
-        const text = document.createElement('div');
-
-        document.getElementById("profile-form").addEventListener('htmx:afterRequest', function (e) {
-            text.textContent = e.detail.xhr.response;
-        });
-
-        const button = document.createElement('vaadin-button');
-        button.setAttribute('slot', 'end');
-        button.setAttribute('theme', 'icon');
-        button.setAttribute('aria-label', 'Close');
-        button.addEventListener('click', function() {
-            document.querySelector('#profile-update-error').opened = false;
-        });
-
-        const buttonIcon = document.createElement('vaadin-icon');
-        buttonIcon.setAttribute('icon', 'vaadin:close');
-
-        button.appendChild(buttonIcon);
-        layout.appendChild(icon);
-        layout.appendChild(text);
-        layout.appendChild(button);
-
-        err.appendChild(layout);
-    };
-</script>
 </html>
