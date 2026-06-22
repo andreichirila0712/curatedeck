@@ -18,20 +18,6 @@
 <main id="main-content" th:fragment="profile-content">
     <vaadin-card theme="outlined">
         <div slot="title">Profile</div>
-<!--        <label for="upload-avatar"-->
-<!--               style="-->
-<!--                       color: var(&#45;&#45;lumo-secondary-text-color);-->
-<!--                       font-weight: 500;-->
-<!--                       font-size: var(&#45;&#45;lumo-font-size-s);-->
-<!--                       font-family: var(&#45;&#45;lumo-font-family);-->
-<!--                       line-height: 1;-->
-<!--                       padding-inline: calc(var(&#45;&#45;lumo-border-radius-m) / 4) 1em;-->
-<!--                       padding-bottom: 0.5em;-->
-<!--                       overflow: hidden;-->
-<!--                       white-space: nowrap;-->
-<!--                       text-overflow: ellipsis;-->
-<!--                       box-sizing: border-box;"-->
-<!--        >Avatar</label>-->
         <vaadin-vertical-layout>
             <vaadin-upload
                     label="Upload avatar"
@@ -50,10 +36,9 @@
         {
             const upload = document.getElementById('upload-avatar');
             upload.addEventListener('upload-request', (e) => {
-                e.detail.xhr.setRequestHeader(
-                    '[[${_csrf.headerName}]]',
-                    '[[${_csrf.token}]]'
-                );
+                const csrfHeader = /*[[${_csrf.headerName}]]*/'';
+                const csrfToken = /*[[${_csrf.token}]]*/'';
+                e.detail.xhr.setRequestHeader(csrfHeader, csrfToken);
             });
         }
     </script>
