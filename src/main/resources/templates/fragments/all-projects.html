@@ -3,8 +3,8 @@
         <img th:id="'project-thumbnail-' + ${project.getId()}" slot="media" alt="Thumbnail"
              th:if="${project.getMedia() != null and project.getMedia().getThumbnail() != null}"
              th:hx-get="'/api/project/' + ${project.getId()} + '/media/thumbnail'" hx-trigger="load"
-             _="on htmx:after:request
-                  set my.src to event.detail.ctx.responseText"
+             _="on htmx:before:swap
+                  set my.src to event.detail.ctx.text"
              hx-swap="none"/>
         <vaadin-icon slot="media" th:unless="${project.getMedia() != null and project.getMedia().getThumbnail() != null}"
                      icon="vaadin:file-picture"
