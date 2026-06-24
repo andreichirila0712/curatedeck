@@ -21,5 +21,6 @@ header:
 garage:
   bucket: test
   endpoint: https://test.com
+  assets: https://test.com
   key: test
   secret: test
