@@ -16,7 +16,9 @@ import java.net.URI;
 @Configuration
 public class S3Config {
     @Value("${garage.endpoint}")
-    private String garageEndpoint;
+    private String clientEndpoint;
+    @Value("${garage.assets}")
+    private String assetsEndpoint;
     @Value("${garage.key}")
     private String accessKey;
     @Value("${garage.secret}")
@@ -26,7 +28,7 @@ public class S3Config {
     @Profile("!integration && !test")
     public S3Client s3Client() {
         return S3Client.builder()
-                .endpointOverride(URI.create(garageEndpoint))
+                .endpointOverride(URI.create(clientEndpoint))
                 .region(Region.of("garage"))
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKey, secretKey)
@@ -41,7 +43,7 @@ public class S3Config {
     @Profile("!integration && !test")
     public S3Presigner presigner() {
         return S3Presigner.builder()
-                .endpointOverride(URI.create(garageEndpoint))
+                .endpointOverride(URI.create(assetsEndpoint))
                 .region(Region.of("garage"))
                 .credentialsProvider(StaticCredentialsProvider.create(
                         AwsBasicCredentials.create(accessKey, secretKey)
