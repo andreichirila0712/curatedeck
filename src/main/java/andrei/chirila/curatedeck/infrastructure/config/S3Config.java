@@ -34,6 +34,7 @@ public class S3Config {
                         AwsBasicCredentials.create(accessKey, secretKey)
                 ))
                 .serviceConfiguration(S3Configuration.builder()
+                        .chunkedEncodingEnabled(false)
                         .pathStyleAccessEnabled(true)
                         .build())
                 .build();
