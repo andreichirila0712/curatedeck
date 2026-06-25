@@ -23,6 +23,10 @@ flows; sensitive credentials never touch the application database.
 * Minimalist, server-side rendered UI with a built-in light/dark theme toggler.
 * Mocked language and date-format settings for future localization.
 
+## Architectural diagram
+
+[![](https://app.eraser.io/workspace/oblAVwMBAPiwE00r6vhj/preview?diagram=ZoQ5bWrr0WOgA_cH6Pmu&type=embed)](https://app.eraser.io/workspace/oblAVwMBAPiwE00r6vhj?diagram=ZoQ5bWrr0WOgA_cH6Pmu)
+
 ## Tech stack
 
 **Backend**
